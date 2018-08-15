@@ -47,5 +47,9 @@
 localhost ansible_connection=local
 
 #Azure host for test
+<<<<<<< HEAD
 #[web]
+=======
+[web]
+>>>>>>> 83adc9c842c0265c1113dea82b6aea7df70ca5cc
 
