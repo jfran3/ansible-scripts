@@ -48,4 +48,4 @@ localhost ansible_connection=local
 
 #Azure host for test
 [web]
-104.42.178.63 ansible_user=godaigo
+
