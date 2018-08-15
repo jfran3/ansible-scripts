@@ -1,0 +1,7 @@
+#master playbook 
+
+---
+
+#file: site.yml
+
+- import_playbook: testProvision.yml

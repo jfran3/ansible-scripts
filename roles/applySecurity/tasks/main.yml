@@ -1,0 +1,36 @@
+---
+# tasks file for applySecurity
+
+  # vars:
+  #   oscap_profile: xccdf_org.ssgproject.content_profile_stig-rhel7-disa
+  #   oscap_policy: ssg-centos7-ds
+
+- name: install/update scap-tools
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - openscap-scanner
+    - scap-security-guide
+
+- block:
+  - name: run openscap evaluation scan
+    command: oscap xccdf eval \
+      --profile {{oscap_profile}} \
+      --results-arf /tmp/oscap-arf.xml \
+      --report /tmp/oscap-report.html \
+      --fetch-remote-resources \
+      /usr/share/xml/scap/ssg/content/{{oscap_policy}}.xml
+
+ #  - name: install/update OSSEC
+ #    yum:
+ #      name: ossec
+ #      state: latest
+
+
+  always:
+  - name: download ospenscap reports
+    fetch:
+       src: /tmp/oscap-report.html
+       dest: /etc/ansible/oscap-reports/{{inventory_hostname}}.html
+       flat: yes

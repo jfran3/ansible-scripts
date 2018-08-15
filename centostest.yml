@@ -1,0 +1,22 @@
+---
+# file:localsystem.yml
+
+- hosts: web
+  become: yes
+  roles:
+     - common
+#    - testProvision
+     - srsp.oracle-java
+     - applySecurity
+#     - kosalaat.oracle_install
+#     - inkatze.wildfly
+
+  vars:
+     - java_version: 10
+     - oscap_profile: xccdf_org.ssgproject.content_profile_stig-rhel7-disa
+     - oscap_policy: ssg-centos7-ds
+#     - time: "{{lookup('pipe', 'date +\"%Y%m%d\"')}}"
+#     - oracle_edition: EE
+#     - oracle_version: 12.2.0.1
+#     - install_mode: INSTALL_DB_AND_CONFIG
+#     - oracle_db_name: elandings_test

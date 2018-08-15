@@ -1,0 +1,17 @@
+---
+# tasks file for common
+
+# Update and upgrade CentOS
+
+- name: Update/Upgrade CentOS
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+- name: make directory opt/el
+  file:
+    path: /opt/el
+    state: directory
+    mode: 0755
+  
