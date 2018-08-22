@@ -1,0 +1,4 @@
+---
+#common remediation tasks after oscap remediation
+
+- name: common remediation after open scap

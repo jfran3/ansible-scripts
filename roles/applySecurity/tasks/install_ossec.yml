@@ -1,0 +1,8 @@
+---
+#install and configure ossec
+
+
+#  - name: install/update OSSEC
+#    yum:
+#      name: ossec
+#      state: latest
