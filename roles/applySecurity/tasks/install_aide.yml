@@ -32,9 +32,9 @@
   command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 
 - name: check the AIDE database move
-  stat: c
+  stat:
     path: /var/lib/aide/aide.db.gz
-  when: c.stat.exists
+  register: c
 - debug:
     msg: "Database moved successfully"
   when: c.stat.exists
