@@ -36,3 +36,74 @@
 # Password protection on the boot loader configuration ensures users with physical access cannot trivially alter important bootloader settings. These include which kernel to use, and whether to enter single-user mode. For more information on how to configure the grub2 superuser account and password, please refer to
 #
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/sec-Protecting_GRUB_2_with_a_Password.html
+
+- name: ensure users re-authenticate for privilege escalation
+# The sudo NOPASSWD tag, when specified, allows a user to execute commands using sudo without having to authenticate. This should be disabled by making sure that the NOPASSWD tag does not exist in /etc/sudoers configuration file or any sudo configuration snippets in /etc/sudoers.d/.
+
+- name: ensure all files are owned by a users
+# If any files are not owned by a user, then the cause of their lack of ownership should be investigated. Following this, the files should be deleted or assigned to an appropriate user.
+# # find / -nogroup -nouser
+#then perhaps assign all the unowned files to root? What's the best policy for this?
+# the following command is from the redhat documentation https://www.stigviewer.com/stig/red_hat_enterprise_linux_7/2017-12-14/finding/V-72007
+# find / -fstype xfs -nouser
+# use chown to assign a new owner
+
+- name: set default firewalld zone for incoming packets
+# To set the default zone to drop for the built-in default zone which processes incoming IPv4 and IPv6 packets, modify the following line in /etc/firewalld/firewalld.conf to be:
+# DefaultZone=drop
+# In firewalld the default zone is applied only after all the applicable rules in the table are examined for a match. Setting the default zone to drop implements proper design for a firewall, i.e. any packets which are not explicitly permitted should not be accepted.
+
+- name: fips ciphers
+# Limit the ciphers to those algorithms which are FIPS-approved. Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode. The following line in /etc/ssh/sshd_config demonstrates use of FIPS 140-2 validated ciphers:
+#
+# Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+#
+#
+# The following ciphers are FIPS 140-2 certified on RHEL 7:
+# - aes128-ctr
+# - aes192-ctr
+# - aes256-ctr
+# - aes128-cbc
+# - aes192-cbc
+# - aes256-cbc
+# - 3des-cbc
+# - rijndael-cbc@lysator.liu.se
+
+# Any combination of the above ciphers will pass this check. Official FIPS 140-2 paperwork for RHEL7 can be found at http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf.
+
+- name: fips macs
+# Limit the MACs to those hash algorithms which are FIPS-approved. The following line in /etc/ssh/sshd_config demonstrates use of FIPS-approved MACs:
+#
+# MACs hmac-sha2-512,hmac-sha2-256
+#
+#
+# Only the following message authentication codes are FIPS 140-2 certified on RHEL 7:
+# - hmac-sha1
+# - hmac-sha2-256
+# - hmac-sha2-512
+# - hmac-sha1-etm@openssh.com
+# - hmac-sha2-256-etm@openssh.com
+# - hmac-sha2-512-etm@openssh.com
+#
+# Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for RHEL7 can be found at http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf.
+# DoD Information Systems are required to use FIPS-approved cryptographic hash functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.
+
+#- name: configure PAM in SSSD services
+
+- name: logical partion fix
+# The /tmp directory is a world-writable directory used for temporary file storage. Ensure it has its own partition or logical volume at installation time, or migrate it using LVM.
+# The /var directory is used by daemons and other system services to store frequently-changing data. Ensure that /var has its own partition or logical volume at installation time, or migrate it using LVM.
+# Audit logs are stored in the /var/log/audit directory. Ensure that it has its own partition or logical volume at installation time, or migrate it later using LVM. Make absolutely certain that it is large enough to store all audit logs that will be created by the auditing daemon.
+# If user home directories will be stored locally, create a separate partition for /home at installation time (or migrate it later using LVM). If /home will be mounted from another system such as an NFS server, then creating a separate partition is not necessary at installation time, and the mountpoint can instead be configured later.
+
+- name: nosuid option /home
+# The nosuid mount option can be used to prevent execution of setuid programs in /home. The SUID and SGID permissions should not be required in these user data directories. Add the nosuid option to the fourth column of /etc/fstab for the line which controls mounting of /home.
+#The mount point '/home' is not even in /etc/fstab, so we can't set up mount options. Not remediating, because there is no record of /home in /etc/fstab
+
+- name: configure uultiple DNS Servers in /etc/resolv.conf
+# Multiple Domain Name System (DNS) Servers should be configured in /etc/resolv.conf. This provides redundant name resolution services in the event that a domain server crashes. To configure the system to contain as least 2 DNS servers, add a corresponding nameserver ip_address entry in /etc/resolv.conf for each DNS server where ip_address is the IP address of a valid DNS server. For example:
+#
+# search example.com
+# nameserver 192.168.0.1
+# nameserver 192.168.0.2
+# Need to determine which fallback DNS servers we want.
