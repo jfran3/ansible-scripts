@@ -22,7 +22,7 @@
 
 - name: check the AIDE database creation
   stat:
-    path: - name: /var/lib/aide/aide.db.new.gz
+    path: /var/lib/aide/aide.db.new.gz
   register: d
 - debug:
     msg: "AIDE database created."
