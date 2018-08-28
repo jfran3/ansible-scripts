@@ -1,0 +1,71 @@
+---
+#install and configure validated AIDE
+
+- name: install AIDE
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - aide
+
+- name: check for the AIDE config files
+  stat:
+    path: /etc/aide.config
+  register: p
+- debug:
+    msg: "AIDE config file exists"
+  when: p.stat.exists
+
+- name: create the AIDE database
+  #command is not idempotent use with creates or another module if possible
+  command: aide --init
+
+
+- name: check the AIDE database creation
+  stat:
+    path: /var/lib/aide/aide.db.new.gz
+  register: d
+- debug:
+    msg: "AIDE database created."
+  when: d.stat.exists
+
+- name: move AIDE database
+  command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+- name: check the AIDE database move
+  stat:
+    path: /var/lib/aide/aide.db.gz
+  register: c
+- debug:
+    msg: "Database moved successfully"
+  when: c.stat.exists
+
+# this does create a file but doesn't format correctly and dosen't pick up the comment
+# - name: create the aidechk.sh files
+#   copy:
+#     dest: "/var/log/aide/aidechk.sh"
+#     owner: root
+#     mode: 0755
+#     content:
+#       #!/bin/sh
+#       DATE=`date +%Y-%m-%d`
+#       REPORT="Aide-"$DATE.txt
+#       aide --check > /tmp/$REPORT
+
+- name: run initial AIDE check
+  command: /var/log/aide/aidechk.sh
+
+- name: set AIDE crontab job
+# 00 01 * * 0-6 /var/log/aide/aidechk.sh
+  cron:
+    name: "aidechk"
+    minute: "0"
+    hour: "04"
+    day: "1"
+    job: "/var/log/aide/aidechk.sh"
+
+- name: restart crond service to pick up AIDE changes.
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: crond
