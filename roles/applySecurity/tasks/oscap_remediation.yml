@@ -24,7 +24,7 @@
     oscap_profile: xccdf_org.ssgproject.content_profile_stig-rhel7-disa
     oscap_policy: ssg-centos7-ds
 
- always:
+ - always:
   - name: download ospenscap reports
     fetch:
        src: /tmp/oscap-report.html
