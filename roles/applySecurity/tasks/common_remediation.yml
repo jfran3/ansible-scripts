@@ -173,7 +173,7 @@
     - NIST-800-53-MP-2
     - DISA-STIG-RHEL-07-021000
 
-- name: configure uultiple DNS Servers in /etc/resolv.conf
+#- name: configure uultiple DNS Servers in /etc/resolv.conf
 
 # Multiple Domain Name System (DNS) Servers should be configured in /etc/resolv.conf. This provides redundant name resolution services in the event that a domain server crashes. To configure the system to contain as least 2 DNS servers, add a corresponding nameserver ip_address entry in /etc/resolv.conf for each DNS server where ip_address is the IP address of a valid DNS server. For example:
 #
