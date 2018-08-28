@@ -20,6 +20,7 @@
   #command is not idempotent use with creates or another module if possible
   command: aide --init
 
+
 - name: check the AIDE database creation
   stat:
     path: /var/lib/aide/aide.db.new.gz
@@ -39,16 +40,17 @@
     msg: "Database moved successfully"
   when: c.stat.exists
 
-- name: create the aidechk.sh files
-  copy:
-    dest: "/var/log/aide/aidechk.sh"
-    owner: root
-    mode: 0755
-    content:
-      #!/bin/sh
-      DATE=`date +%Y-%m-%d`
-      REPORT="Aide-"$DATE.txt
-      aide --check > /tmp/$REPORT
+# this does create a file but doesn't format correctly and dosen't pick up the comment
+# - name: create the aidechk.sh files
+#   copy:
+#     dest: "/var/log/aide/aidechk.sh"
+#     owner: root
+#     mode: 0755
+#     content:
+#       #!/bin/sh
+#       DATE=`date +%Y-%m-%d`
+#       REPORT="Aide-"$DATE.txt
+#       aide --check > /tmp/$REPORT
 
 - name: run initial AIDE check
   command: /var/log/aide/aidechk.sh
