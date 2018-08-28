@@ -1,6 +1,6 @@
 ---
 # tasks file for applySecurity
 
-- include oscap_remediation.yml
-- include common_remediation.yml
-#- include install_ossec.yml
+- include: oscap_remediation.yml
+- include: common_remediation.yml
+#- include: install_ossec.yml
